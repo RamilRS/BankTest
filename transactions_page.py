@@ -14,3 +14,12 @@ class TransactionsPage(BasePage):
         type = self.browser.find_elements(By.CSS_SELECTOR,f'tr[id*="anchor{index}"] td:nth-child(3)')[0].text
         return (date,amount,type)
 
+    def get_sort_reverse(self):
+        dateheader = self.browser.find_element(By.CSS_SELECTOR,'a[ng-click*="sortType = "]')
+        reverse = self.browser.execute_script('return angular.element(arguments[0]).scope().sortReverse;', dateheader)
+        return reverse
+
+    def reverse_sort(self):
+        dateheader = self.browser.find_element(By.CSS_SELECTOR,'a[ng-click*="sortType = "]')
+        self.browser.execute_script("arguments[0].click();", dateheader)
+
