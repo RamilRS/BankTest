@@ -23,3 +23,16 @@ class TransactionsPage(BasePage):
         dateheader = self.browser.find_element(By.CSS_SELECTOR,'a[ng-click*="sortType = "]')
         self.browser.execute_script("arguments[0].click();", dateheader)
 
+    def get_table(self):
+        # Находим таблицу по селектору (например, по классу)
+        table = self.browser.find_element(By.CSS_SELECTOR, 'table.table')
+        rows = table.find_elements(By.TAG_NAME, 'tr')
+        table_data = []
+        for row in rows:
+            cells = row.find_elements(By.TAG_NAME, 'td')
+            row_data = [cell.get_attribute('innerText') for cell in cells]
+            if row_data:
+                table_data.append(row_data)
+
+        return(table_data)
+

@@ -5,6 +5,7 @@ from account_page import AccountPage
 from transactions_page import  TransactionsPage
 from selenium.webdriver.common.by import By
 from time import sleep
+from datetime import datetime
 
 @pytest.fixture()
 def transactions(browser):
@@ -46,20 +47,19 @@ def test_transaction_appears(browser):
     print(trans)
     assert (trans[1]=='1000' and trans[2]=="Credit")==True
 
-
 if __name__ == '__main__':
     link = "https://www.globalsqa.com/angularJs-protractor/BankingProject/"
     browser = webdriver.Chrome()
     browser.get(link)
     page = MainPage(browser,link)
     page.open()
-#    sleep(1)
-#    page.manager_login()
-#    sleep(2)
-#    page.open_account(1)
-#    sleep(2)
-#    page.open()
-#    sleep(2)
+    sleep(1)
+    page.manager_login()
+    sleep(2)
+    page.open_account(1)
+    sleep(2)
+    page.open()
+    sleep(2)
 
     page.customer_login()
     sleep(1)
@@ -72,13 +72,22 @@ if __name__ == '__main__':
     sleep(1)
     account_page.goto_transactions()
     account_page.select_account_by_index(0) # с 0 счетом работает корректно
-    sleep(1)
     transactions_page=TransactionsPage(browser,browser.current_url)
+    table=transactions_page.get_table()
+    if len(table)>=2:
+        print(table[1][0],table[-1][0])
+        first_date = datetime.strptime(table[1][0], '%b %d, %Y %I:%M:%S %p')
+        last_date = datetime.strptime(table[-1][0], '%b %d, %Y %I:%M:%S %p')
+        if last_date > first_date:
+            print(f"Последняя дата {last_date} больше первой даты {first_date}.")
+        else:
+            print(f"Первая дата {first_date} больше или равна последней дате {last_date}.")
+            print("Реверсивная сортировка")
     transactions_page.reverse_sort()
     sleep(5)
     trans = transactions_page.get_transaction(0) # первая транзакция
     print(trans)
-    print(transactions_page.get_sort_reverse())
-    assert (trans[1]=='30' and trans[2]=="Credit")==True
+    # проверяем добавленную транзакцию
+    assert (trans[1]=='1000' and trans[2]=="Credit")==True
     browser.quit()
 
